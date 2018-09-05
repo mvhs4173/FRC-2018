@@ -8,7 +8,7 @@ public class PowerCubeCollector extends Subsystem {
 	
 		private MotorController leftMotor;
 		private MotorController rightMotor;
-		private int intakeMotorSpeedRPS = 4;
+		private int intakeMotorSpeedRPS = 3;
 		
 		public enum CollectorStatus {
 			INTAKE,

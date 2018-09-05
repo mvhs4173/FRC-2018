@@ -33,18 +33,15 @@ public class RobotMap {
 	 * DIGITAL 0-9
 	 * ANALOG 0-3
 	 */
-	public static int FRONT_RIGHT_WHEEL = 11,
-			FRONT_LEFT_WHEEL = 1,
-			REAR_RIGHT_WHEEL = 12,
-			REAR_LEFT_WHEEL = 13,
-			motor1 = 10,
-			motor2 = 6,
-			motor3 = 7,
-			motor4 = 8,
-			DIO0 = 0,
-			DIO1 = 1,
-			DIO2 = 2,
-			DIO3 = 3,
-			DIO4 = 4;
+	public static int FRONT_RIGHT_WHEEL = 42,
+			FRONT_LEFT_WHEEL = 18,
+			REAR_RIGHT_WHEEL = 16,
+			REAR_LEFT_WHEEL = 17,
+			COLLECTOR_LEFT_INTAKE = 40,
+			COLLECTOR_RIGHT_INTAKE = 41,
+			SLIDE_MOTOR = 15,
+			HORIZONTAL_SLIDE_MOTOR = 14,
+			SLIDE_LOW_SWITCH = 0,
+			CLIMB_MOTOR = 43;
 	
 }

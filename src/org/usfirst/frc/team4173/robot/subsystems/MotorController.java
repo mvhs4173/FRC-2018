@@ -14,6 +14,7 @@ public class MotorController {
 	private final double rpmToClicksPer100ms =  ticksPerShaftRotation/1.0 * 1.0/60.0 * 1.0/10.0;// rev/min = 4096 clicks/rev * 1min/60s * 1s/10 centi seconds
 	private final double rpsToClicksPer100ms = rpmToClicksPer100ms*60;
 	private final double actualOverRequestedRPM =  0.85589;
+	private int origin = 0;
 	
 	/***
 	 * 
@@ -24,14 +25,30 @@ public class MotorController {
 		
 		//Tell the motors to brake if there is no voltage being applied to them
 		controller.setNeutralMode(NeutralMode.Brake);
-		configPID(0.001, 0, 0, 1);
+		configPID(0.01, 0.0, 0.1, 1);
 		//Set the thing that we use as an encoder
 		ticksPerShaftRotation = 4096;
-		
 	}
 	
-	public void enableReverseSoftwareLimit(boolean enable) {
-		controller.configReverseSoftLimitEnable(enable, 0);
+	
+	public void enableForwardLimitSwitch() {
+		//Tell the controller where the limit switch is plugged in
+		controller.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, standardTimeoutMs);
+		controller.overrideLimitSwitchesEnable(false);//Enable switch
+	}
+	
+	public void enableReverseLimitSwitch() {
+		//Tell the controller where the limit switch is plugged in
+		controller.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,  LimitSwitchNormal.NormallyOpen, standardTimeoutMs);
+		controller.overrideLimitSwitchesEnable(false);//Enable switch
+	}
+	
+	/**
+	 * Set how long it should take for the motors to accelerate to the desired speed
+	 * @param secondsToAccelerate How many seconds it should take to accelerate
+	 */
+	public void setMaxAccelerationTime(double secondsToAccelerate) {
+		controller.configClosedloopRamp(secondsToAccelerate,  10);
 	}
 	
 	/**
@@ -96,7 +113,7 @@ public class MotorController {
 	 * @param error The allowable error in the PID loop
 	 */
 	public void configPID(double p, double i, double d, int error){
-		controller.config_kF(0, 0.32, standardTimeoutMs);
+		controller.config_kF(0, 0.23, standardTimeoutMs);
 		controller.config_kP(0, p, standardTimeoutMs);
 		controller.config_kI(0, i, standardTimeoutMs);
 		controller.config_kD(0, d, standardTimeoutMs);
@@ -114,7 +131,7 @@ public class MotorController {
 	 * @return The position, in ticks of the encoder
 	 */
 	public int getEncoderPosition() {
-		return controller.getSelectedSensorPosition(0);
+		return controller.getSelectedSensorPosition(0) - origin;
 	}
 	
 	/**
@@ -217,7 +234,8 @@ public class MotorController {
 	 * Resets the encoder position to 0
 	 */
 	public void zeroEncoder() {
-		controller.setSelectedSensorPosition(0, 0, standardTimeoutMs);
+		//controller.setSelectedSensorPosition(0, 0, standardTimeoutMs);
+		origin = controller.getSelectedSensorPosition(0);
 	}
 	
 	/**

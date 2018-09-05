@@ -1,5 +1,4 @@
 package org.usfirst.frc.team4173.robot.subsystems;
-
 /**
  * Created by ROBOT18 on 10/26/2017.
  */
@@ -45,7 +44,7 @@ public class Degrees {
         if (d > 180){
             d = d - 360;
         }
-        if (d <= -180){
+        if (d < -180){
             d = d + 360;
         }
         return d;

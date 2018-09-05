@@ -19,7 +19,7 @@ public class DriveUnit {
 			 frontMotor;
 	
 	UnitSide unitSide;
-	private final double wheelDiameter = 5.8/12.0; //feet
+	private final double wheelDiameter = 6.0/12.0; //feet
 	private final double ticksPerShaftRotation = 4096.0;
 	
 	private final double rpmToClicksPer100ms =  ticksPerShaftRotation/1.0 * 1.0/60.0 * 1.0/10.0;// rev/min = 4096 clicks/rev * 1min/60s * 1s/10 centi seconds
@@ -37,26 +37,21 @@ public class DriveUnit {
 	 * @param rearCanID The id of the back drive motor Talon, If 0 the class will not use a rear motor controller
 	 * @param side Indicates which side of the robot the two drive motors control
 	 */
-	public DriveUnit(int frontCAN, int rearCAN, UnitSide side) {
-		frontMotor = new MotorController(frontCAN);
-		prefs = Robot.prefs;
+	public DriveUnit(MotorController frontCAN, MotorController rearCAN, UnitSide side) {
+		frontMotor = frontCAN;
 		//If a valid can id has been provided for the rear motor controller
-		//if (rearCAN != null) {
-			rearMotor = new MotorController(rearCAN);
+		if (rearCAN != null) {
+			rearMotor = rearCAN;
 			//Tells the rear motor to do whatever the front motor does
 			rearMotor.setFollower(frontMotor);
 			rearMotor.setBrake(NeutralMode.Brake);
-		//}
+		}
 		
 		//Tell the motors to brake if there is no voltage being applied to them
 		frontMotor.setBrake(NeutralMode.Brake);
-		configPID(prefs.getDouble("P Factor",  0.1), 0, 0, 1);
+		configPID(0.001, 0, 0.1, 1);
 		
 		unitSide = side;
-	}
-	
-	public void enableReverseSoftwareLimit(boolean enable) {
-		frontMotor.enableReverseSoftwareLimit(enable);
 	}
 	
 	/**
@@ -69,6 +64,10 @@ public class DriveUnit {
 		}
 		
 		frontMotor.setVelocityRPS(rps);
+	}
+	
+	public double getAmps() {
+		return frontMotor.getAmps();
 	}
 	
 	/**
@@ -181,18 +180,11 @@ public class DriveUnit {
 	}
 	
 	public void setVelocityRPM(double rpm) {
-		double clicksPer100ms = rpm * rpmToClicksPer100ms;
-		
-		double finalSpeed = clicksPer100ms / actualOverRequestedRPM;// + 231;
-		
-		if (unitSide == UnitSide.RIGHT) {
-			finalSpeed = -finalSpeed;
+		if (unitSide == UnitSide.LEFT) {
+			frontMotor.setVelocityRPM(rpm);
+		}else {
+			frontMotor.setVelocityRPM(-rpm);
 		}
-		
-		frontMotor.setVelocityRPM(finalSpeed);
-		
-		SmartDashboard.putNumber("Requested RPM",  rpm);
-		SmartDashboard.putNumber("Requested clicks per 100 ms",  clicksPer100ms);
 	}
 	
 	/**
@@ -201,8 +193,7 @@ public class DriveUnit {
 	 */
 	public void setVelocityFPS(double fps) {
 		//First convert to inches per minute
-		double fpm = (fps //feet/sec
-				* 60); //60 sec/min;
+		double fpm = (fps * 60); //60 sec/min;
 		//Convert to rpm
 		double rpm = fpm / (wheelDiameter * Math.PI);
 		
@@ -227,6 +218,7 @@ public class DriveUnit {
 	 * Tells the motor to turn to the ticks specified
 	 * @param ticks The position in ticks to set the encoder to
 	 */
+	@SuppressWarnings("unused")
 	private void setPositionInTicks(int ticks) {
 		if (unitSide == UnitSide.RIGHT) {
 			ticks = -ticks;

@@ -1,6 +1,8 @@
 package org.usfirst.frc.team4173.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+
+import org.usfirst.frc.team4173.robot.Hardware;
 import org.usfirst.frc.team4173.robot.subsystems.PowerCubeCollector;
 
 /**
@@ -10,9 +12,9 @@ public class StopCubeCollector extends Command {
 		private PowerCubeCollector cubeCollector;
 		boolean isDone = false;
 		
-		public StopCubeCollector(PowerCubeCollector cubeCollector) {
-			requires(cubeCollector);
-			this.cubeCollector = cubeCollector;
+		public StopCubeCollector() {
+			requires(Hardware.cubeCollector);
+			this.cubeCollector = Hardware.cubeCollector;
 		}
 
 		// Called repeatedly when this Command is scheduled to run

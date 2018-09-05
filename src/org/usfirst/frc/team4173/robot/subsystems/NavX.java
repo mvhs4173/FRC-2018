@@ -23,24 +23,13 @@ public class NavX{
 		return angle - originAngle;//The angle of the robot based on its starting angle
 	}
 	
-	public static double subtractAngles(double x, double y){
-        double d = x - y;
-        if (d > 180){
-            d = d - 360;
-        }
-        if (d < -180){
-            d = d + 360;
-        }
-        return d;
-    }
-	
 	
 	//Returns the given angle in an angle that can range from -180 to +180
-	
-	/**
+	   
+	/** 
 	 * @param angle The angle to convert
 	 * @return Returns an angle that has been converted to a range of -180 to +180 degrees
-	 */
+	 */ 
 	public double convertTo180Angles(double angle) {
 		double relativeAngle = getRelativeAngle(angle);
 		
@@ -50,32 +39,11 @@ public class NavX{
 		if (angle360 >= 180) {
 			angle180 = angle360 - 360;
 		}
-		//If the number of 360 turns is not an integer
-		/*if (num360s > 1 && num360s < Math.floor(num360s) + 1) {
-			base360Angle = relativeAngle - Math.floor(num360s) * 360;
-			//If the number of 360 turns is an integer
-		}else if(num360s > 1) {
-			base360Angle = relativeAngle - (num360s - 1) * 360;
-			//If number of 360 turns is less than 1
-		}else {
-			base360Angle = relativeAngle;
-		}
-		
-		//Now convert the 360 angle to a range of -180 to +180
-		if (base360Angle > 180) {
-			angle180 = base360Angle - 360;
-		}else if(base360Angle < -180) {
-			angle180 = base360Angle + 360;
-		}else {
-			angle180 = base360Angle;
-		}
-		*/
-		
 		return angle180;
-	}
-	
+	}   
+	    
 	//Returns the heading in the range of -180 to +180
-	
+	    
 	/**
 	 * @return Returns the heading of the robot. Its heading can be anything from -180 to +180 degrees, Positive angles are equivalent to a clockwise turn 
 	 */

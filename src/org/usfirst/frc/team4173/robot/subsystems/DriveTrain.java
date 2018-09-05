@@ -1,7 +1,7 @@
 package org.usfirst.frc.team4173.robot.subsystems;
 
 import org.usfirst.frc.team4173.robot.OI;
-import org.usfirst.frc.team4173.robot.Robot;
+import org.usfirst.frc.team4173.robot.*;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
@@ -19,9 +19,10 @@ public class DriveTrain extends Subsystem {
 	private static double distanceBetweenWheels = 26.0/12.0; //feet
 	
 	//Variables for driving in straight line
-	double linePFactor;
+	double linePFactor = 0.05;
 	double lineAllowableAngleError = 0.1;
-	double lineMaxMultiplyNumber;
+	double lineMaxMultiplyNumber = 3;
+	double maxSpeedFPS = 8;
 	
 	/**
 	 * The drivetrain class with methods needed for driving the robot
@@ -43,13 +44,14 @@ public class DriveTrain extends Subsystem {
 	 * @return A double array with 2 indexes containing the new speeds that should be applied to the left and right motors of the robot, The first index is the new speed for the Left Drive Unit
 	 */
 	public double[] calculateMotorSpeedsForStraightLine(double desiredSpeed, double desiredHeading, double currentLeftMotorSpeed, double currentRightMotorSpeed, double currentHeading) {
-		linePFactor = Robot.prefs.getDouble("Line PFactor",  0.04);
-		lineMaxMultiplyNumber = Robot.prefs.getDouble("MaxMultiplyNumber",  1);
+		linePFactor = Robot.prefs.getDouble("Straight line P Factor",  0.05);
+		lineMaxMultiplyNumber = Robot.prefs.getDouble("Line Max Multiply Number",  3);
+		
 		double newRightSpeed = currentRightMotorSpeed;
 		double newLeftSpeed = currentLeftMotorSpeed;
 		
 		double currentAngle = currentHeading;
-		double angleError = NavX.subtractAngles(currentAngle, desiredHeading);
+		double angleError = Degrees.subtract(currentAngle, desiredHeading);
 		
 		boolean isErrorNegative = angleError < 0;
 		
@@ -105,21 +107,48 @@ public class DriveTrain extends Subsystem {
 		rightUnit.setVelocityFPS(newMotorSpeeds[1]);
 	}
 	
-	public void driveWithJoystick(double x, double y) {
+	/**
+	 * Gets the average distance that both sides of the robot have traveled
+	 * @return Distance that the robot has traveled in feet
+	 */
+	
+	public void driveWithJoystick(double x, double y, double throttle) {		
 		
 		//If the system is in reverse mode
 		if (inReverseMode) {
 			//Reverse the inputs
 			y = -y;
 		}
-		double X=x;
+		double T=(throttle - 1)/-2;
+		double X=(x*T);
 		double Y=y;
 		double V=(100-Math.abs(X))*(Y/100)+Y;
 		double W=(100-Math.abs(Y))*(X/100)+X;
 		double L=(V-W)/2;
 		double R=(V+W)/2;
-		leftUnit.setPercentSpeed(-L);
-		rightUnit.setPercentSpeed(-R);
+		
+		L = L*20;
+		R = R*20;
+		
+		boolean leftSpeedNegative = L < 0;
+		boolean rightSpeedNegative = R < 0;
+		
+		R = Math.min(Math.abs(R),  maxSpeedFPS);
+		L = Math.min(Math.abs(L),  maxSpeedFPS);
+		
+		if (leftSpeedNegative) {
+			L = -L;
+		}
+		
+		if (rightSpeedNegative) {
+			R = -R;
+		}
+		
+		leftUnit.setVelocityFPS(L);//The 30 increases speed
+		rightUnit.setVelocityFPS(R);
+		
+		SmartDashboard.putNumber("Requested Left Speed",  L*20);
+		SmartDashboard.putNumber("Requested Right Speed",  R*20);
 	}
 	
 	public void driveUnitAtPercentSpeed(double speed) {

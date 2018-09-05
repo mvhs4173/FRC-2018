@@ -7,7 +7,8 @@ import edu.wpi.first.wpilibj.DriverStation;
  */
 public class GameDataRetriever {
 	
-	private String gameData;
+	private String gameData = "";
+	
 	private DriverStation driverStation;
 	
 	public enum ColorSide {
@@ -35,6 +36,10 @@ public class GameDataRetriever {
 		//Gets the game data from the driver station
 		gameData = driverStation.getGameSpecificMessage();
 		
+		if (gameData == null) {
+			gameData = "";
+		}
+		
 		ColorSide result = ColorSide.NOT_AVAILABLE;
 		int charIndex = 0;
 		
@@ -50,6 +55,7 @@ public class GameDataRetriever {
 				charIndex = 2;
 				break;
 		}
+		
 		
 		//Check if anything was received
 		if (gameData.length() > 0) {

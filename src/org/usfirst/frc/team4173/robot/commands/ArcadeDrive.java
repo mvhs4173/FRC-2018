@@ -1,6 +1,7 @@
 package org.usfirst.frc.team4173.robot.commands;
 
 
+import org.usfirst.frc.team4173.robot.Hardware;
 import org.usfirst.frc.team4173.robot.Robot;
 import org.usfirst.frc.team4173.robot.RobotMap;
 import org.usfirst.frc.team4173.robot.subsystems.DriveTrain;
@@ -15,12 +16,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 @SuppressWarnings("unused")
 public class ArcadeDrive extends Command {
-	DriveTrain drivetrain = Robot.drivetrain;
+	DriveTrain drivetrain = Hardware.driveTrain;
 	
     public ArcadeDrive() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-    	requires(Robot.drivetrain);
+    	requires(Hardware.driveTrain);
     }
 
     // Called just before this Command runs the first time

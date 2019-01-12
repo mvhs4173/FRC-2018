@@ -7,7 +7,20 @@
 
 package org.usfirst.frc.team4173.robot;
 
-import edu.wpi.first.wpilibj.CameraServer;
+import org.usfirst.frc.team4173.robot.commands.AutoCubePickup;
+import org.usfirst.frc.team4173.robot.commands.Autonomous_Left;
+import org.usfirst.frc.team4173.robot.commands.Autonomous_Middle;
+import org.usfirst.frc.team4173.robot.commands.Autonomous_Right;
+import org.usfirst.frc.team4173.robot.commands.DriveToDistance;
+import org.usfirst.frc.team4173.robot.commands.TurnToAngle;
+import org.usfirst.frc.team4173.robot.subsystems.CoordinateSystem;
+import org.usfirst.frc.team4173.robot.subsystems.CubeDetector;
+import org.usfirst.frc.team4173.robot.subsystems.GameDataRetriever;
+import org.usfirst.frc.team4173.robot.subsystems.GameDataRetriever.ColorSide;
+import org.usfirst.frc.team4173.robot.subsystems.GameDataRetriever.GameObject;
+import org.usfirst.frc.team4173.robot.subsystems.LinearSlide.slidePosition;
+
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -15,22 +28,6 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import org.usfirst.frc.team4173.robot.commands.AutoCubePickup;
-import org.usfirst.frc.team4173.robot.commands.Autonomous_Left;
-import org.usfirst.frc.team4173.robot.commands.Autonomous_Middle;
-import org.usfirst.frc.team4173.robot.commands.Autonomous_Right;
-import org.usfirst.frc.team4173.robot.commands.DriveToDistance;
-import org.usfirst.frc.team4173.robot.commands.MoveSlide;
-import org.usfirst.frc.team4173.robot.commands.TestCoordinates;
-import org.usfirst.frc.team4173.robot.commands.TurnToAngle;
-
-import org.usfirst.frc.team4173.robot.subsystems.*;
-import org.usfirst.frc.team4173.robot.subsystems.DriveUnit.UnitSide;
-import org.usfirst.frc.team4173.robot.subsystems.GameDataRetriever.ColorSide;
-import org.usfirst.frc.team4173.robot.subsystems.GameDataRetriever.GameObject;
-import org.usfirst.frc.team4173.robot.subsystems.LinearSlide.slidePosition;
-
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -40,7 +37,7 @@ import org.usfirst.frc.team4173.robot.subsystems.LinearSlide.slidePosition;
  * project.
  */
 public class Robot extends TimedRobot {
-	
+
 	public static boolean climbSafetyPressed = false;
 	
 	public static enum AutonomousTarget {
@@ -86,10 +83,10 @@ public class Robot extends TimedRobot {
 		prefs = Preferences.getInstance();
 		hardware = new Hardware();
 		
-		autoTargrt.addDefault("Switch", AutonomousTarget.SWITCH);
-		autoTargrt.addObject("Scale", AutonomousTarget.SCALE);
-		autoTargrt.addObject("Line", AutonomousTarget.AUTO_LINE);
-		autoTargrt.addObject("Two Cubes",  AutonomousTarget.TWO_CUBES_AUTO);
+		autoTargrt.setDefaultOption("Switch", AutonomousTarget.SWITCH);
+		autoTargrt.addOption("Scale", AutonomousTarget.SCALE);
+		autoTargrt.addOption("Line", AutonomousTarget.AUTO_LINE);
+		autoTargrt.addOption("Two Cubes",  AutonomousTarget.TWO_CUBES_AUTO);
 		
 		cubeDetector = new CubeDetector();
 		cubeDetector.ledEnabled(false);
@@ -100,7 +97,7 @@ public class Robot extends TimedRobot {
 		//Set up the data retriever so we will know what side our color is on
 		dataRetriever = new GameDataRetriever();
 		
-		// chooser.addObject("My Auto", new MyAutoCommand());
+		// chooser.addOption("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", m_chooser);		
 		
 		coordinateSystem = new CoordinateSystem(startingCoordinate);
@@ -111,9 +108,9 @@ public class Robot extends TimedRobot {
 		
 		CameraServer.getInstance().startAutomaticCapture();
 		
-		m_chooser.addObject("Left", new Autonomous_Left(AutonomousTarget.AUTO_LINE));
-		m_chooser.addDefault("Middle", new Autonomous_Middle(AutonomousTarget.AUTO_LINE));
-		m_chooser.addObject("Right", new Autonomous_Right(AutonomousTarget.AUTO_LINE));
+		m_chooser.addOption("Left", new Autonomous_Left(AutonomousTarget.AUTO_LINE));
+		m_chooser.setDefaultOption("Middle", new Autonomous_Middle(AutonomousTarget.AUTO_LINE));
+		m_chooser.addOption("Right", new Autonomous_Right(AutonomousTarget.AUTO_LINE));
 	}
 
 	/**

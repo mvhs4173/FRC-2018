@@ -47,26 +47,6 @@ public class NavX{
 		if (angle360 > 180) {
 			angle180 -= 360;
 		}
-		//If the number of 360 turns is not an integer
-		/*if (num360s > 1 && num360s < Math.floor(num360s) + 1) {
-			base360Angle = relativeAngle - Math.floor(num360s) * 360;
-			//If the number of 360 turns is an integer
-		}else if(num360s > 1) {
-			base360Angle = relativeAngle - (num360s - 1) * 360;
-			//If number of 360 turns is less than 1
-		}else {
-			base360Angle = relativeAngle;
-		}
-		
-		//Now convert the 360 angle to a range of -180 to +180
-		if (base360Angle > 180) {
-			angle180 = base360Angle - 360;
-		}else if(base360Angle < -180) {
-			angle180 = base360Angle + 360;
-		}else {
-			angle180 = base360Angle;
-		}
-		*/
 		
 		return angle180;
 	}

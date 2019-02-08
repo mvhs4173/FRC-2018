@@ -37,18 +37,18 @@ public class DriveToDistance extends Command {
 	/**
 	 * Will drive in a straight line until another command using the DriveTrain subsystem is called
 	 * @param driveTrain The driveTrain subsystem 
-	 * @param navX the gyro sensor that will get headings
+	 * @param navX2 the gyro sensor that will get headings
 	 * @param desiredDriveHeading The direction the robot will drive in degrees
 	 * @param Number of feet for the robot to travel
 	 */
-	public DriveToDistance(DriveTrain driveTrain, NavX navX, double desiredDriveHeading, double feet) {
+	public DriveToDistance(DriveTrain driveTrain, NavX navX2, double desiredDriveHeading, double feet) {
 		requires(driveTrain);
 		this.driveTrain = driveTrain;
 		desiredHeading = desiredDriveHeading;
-		this.navX = navX;
+		this.navX = navX2;
 		this.feetToTravel = feet;
 	}
-	
+
 	double signedSqrt(double x) {
     	return Math.signum(x) * Math.sqrt(Math.abs(x));
     }
